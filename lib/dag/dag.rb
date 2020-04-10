@@ -28,23 +28,23 @@ module Dag
     #access to _changed? and _was for (edge,count) if not default
     unless direct_column_name == 'direct'
       module_eval <<-"end_eval", __FILE__, __LINE__
-						def direct_changed?
-							self.#{direct_column_name}_changed?
-						end
-						def direct_was
-							self.#{direct_column_name}_was
-						end
+            def direct_changed?
+              self.#{direct_column_name}_changed?
+            end
+            def direct_was
+              self.#{direct_column_name}_was
+            end
       end_eval
     end
 
     unless count_column_name == 'count'
       module_eval <<-"end_eval", __FILE__, __LINE__
-						def count_changed?
-							self.#{count_column_name}_changed?
-						end
-						def count_was
-							self.#{count_column_name}_was
-						end
+            def count_changed?
+              self.#{count_column_name}_changed?
+            end
+            def count_was
+              self.#{count_column_name}_was
+            end
       end_eval
     end
 
@@ -125,9 +125,9 @@ module Dag
 
     [count_column_name].each do |column|
       module_eval <<-"end_eval", __FILE__, __LINE__
-						def #{column}=(x)
-							raise ActiveRecord::ActiveRecordError, "ERROR: Unauthorized assignment to #{column}: it's an internal field handled by acts_as_dag code."
-						end
+            def #{column}=(x)
+              raise ActiveRecord::ActiveRecordError, "ERROR: Unauthorized assignment to #{column}: it's an internal field handled by acts_as_dag code."
+            end
       end_eval
     end
   end
@@ -175,9 +175,9 @@ module Dag
                 has_many :#{prefix}links_as_child_for_#{table_name}, lambda { where('#{dag_link_class.ancestor_type_column_name}' => '#{class_name}','#{dag_link_class.direct_column_name}' => true) }, :as => :descendant, :class_name => '#{dag_link_class_name}'
                 has_many :#{prefix}parent_#{table_name}, :through => :#{prefix}links_as_child_for_#{table_name}, :source => :ancestor, :source_type => '#{class_name}'
 
-              	def #{prefix}root_for_#{table_name}?
-									self.links_as_descendant_for_#{table_name}.empty?
-            		end
+                def #{prefix}root_for_#{table_name}?
+                  self.links_as_descendant_for_#{table_name}.empty?
+                end
         EOL2
         ancestor_table_names << (prefix+'ancestor_'+table_name)
         parent_table_names << (prefix+'parent_'+table_name)
@@ -189,29 +189,29 @@ module Dag
 
       unless conf[:ancestor_class_names].empty?
         self.class_eval <<-EOL25
-								def #{prefix}ancestors
-									#{ancestor_table_names.join(' + ')}
-								end
-								def #{prefix}parents
-									#{parent_table_names.join(' + ')}
-								end
+                def #{prefix}ancestors
+                  #{ancestor_table_names.join(' + ')}
+                end
+                def #{prefix}parents
+                  #{parent_table_names.join(' + ')}
+                end
         EOL25
       else
         self.class_eval <<-EOL26
-								def #{prefix}ancestors
-									a = []
-									#{prefix}links_as_descendant.each do |link|
-										a << link.ancestor
-									end
-									a
-								end
-								def #{prefix}parents
-									a = []
-									#{prefix}links_as_child.each do |link|
-										a << link.ancestor
-									end
-									a
-								end
+                def #{prefix}ancestors
+                  a = []
+                  #{prefix}links_as_descendant.each do |link|
+                    a << link.ancestor
+                  end
+                  a
+                end
+                def #{prefix}parents
+                  a = []
+                  #{prefix}links_as_child.each do |link|
+                    a << link.ancestor
+                  end
+                  a
+                end
         EOL26
       end
 
@@ -226,9 +226,9 @@ module Dag
                 has_many :#{prefix}links_as_parent_for_#{table_name}, lambda { where('#{dag_link_class.descendant_type_column_name}' => '#{class_name}','#{dag_link_class.direct_column_name}' => true) }, :as => :ancestor, :class_name => '#{dag_link_class_name}'
                 has_many :#{prefix}child_#{table_name}, :through => :#{prefix}links_as_parent_for_#{table_name}, :source => :descendant, :source_type => '#{class_name}'
 
-								def #{prefix}leaf_for_#{table_name}?
-                	self.links_as_ancestor_for_#{table_name}.empty?
-              	end
+                def #{prefix}leaf_for_#{table_name}?
+                  self.links_as_ancestor_for_#{table_name}.empty?
+                end
         EOL3
         descendant_table_names << (prefix+'descendant_'+table_name)
         child_table_names << (prefix+'child_'+table_name)
@@ -239,29 +239,29 @@ module Dag
 
       unless conf[:descendant_class_names].empty?
         self.class_eval <<-EOL35
-								def #{prefix}descendants
-									#{descendant_table_names.join(' + ')}
-								end
-								def #{prefix}children
-									#{child_table_names.join(' + ')}
-								end
+                def #{prefix}descendants
+                  #{descendant_table_names.join(' + ')}
+                end
+                def #{prefix}children
+                  #{child_table_names.join(' + ')}
+                end
         EOL35
       else
         self.class_eval <<-EOL36
-								def #{prefix}descendants
-									d = []
-									#{prefix}links_as_ancestor.each do |link|
-										d << link.descendant
-									end
-									d
-								end
-								def #{prefix}children
-									d = []
-									#{prefix}links_as_parent.each do |link|
-										d << link.descendant
-									end
-									d
-								end
+                def #{prefix}descendants
+                  d = []
+                  #{prefix}links_as_ancestor.each do |link|
+                    d << link.descendant
+                  end
+                  d
+                end
+                def #{prefix}children
+                  d = []
+                  #{prefix}links_as_parent.each do |link|
+                    d << link.descendant
+                  end
+                  d
+                end
         EOL36
       end
     else
@@ -287,13 +287,13 @@ module Dag
             def #{prefix}self_and_descendants
               [self] + #{prefix}descendants
             end
-            
+
             def #{prefix}leaf?
               self.#{prefix}links_as_ancestor.empty?
-						end
-						def #{prefix}root?
-							self.#{prefix}links_as_descendant.empty?
-						end
+            end
+            def #{prefix}root?
+              self.#{prefix}links_as_descendant.empty?
+            end
     EOL5
   end
 
